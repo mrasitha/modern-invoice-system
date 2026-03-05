@@ -95,6 +95,15 @@ class DocumentController extends Controller
         return redirect()->route('dashboard')->with('success', 'Quotation converted to Invoice!');
     }
 
+    public function viewPDF($id)
+    {
+        $document = Document::with(['project', 'items'])->findOrFail($id);
+        $pdf = Pdf::loadView('documents.pdf', compact('document'));
+        
+        // download() වෙනුවට stream() පාවිච්චි කරමු
+        return $pdf->stream($document->doc_number . '.pdf');
+    }
+    
     public function downloadPDF($id)
     {
         // Document එක සහ ඒකට අදාළ Project, Items ඔක්කොම එකපාර ගන්නවා (Magic of Eloquent)

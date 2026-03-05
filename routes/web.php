@@ -28,4 +28,5 @@ Route::get('/documents/create', [DocumentController::class, 'create'])->name('do
 Route::post('/documents/store', [DocumentController::class, 'store'])->name('documents.store');
 Route::get('/documents/{id}/status/{status}', [DocumentController::class, 'updateStatus'])->name('documents.updateStatus');
 Route::get('/documents/{id}/convert', [DocumentController::class, 'convertToInvoice'])->name('documents.convert');
+Route::get('/documents/{id}/view-pdf', [DocumentController::class, 'viewPDF'])->name('documents.viewPdf');
 Route::get('/documents/{id}/pdf', [DocumentController::class, 'downloadPDF'])->name('documents.pdf');
