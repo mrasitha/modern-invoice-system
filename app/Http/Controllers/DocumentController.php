@@ -48,4 +48,44 @@ class DocumentController extends Controller
 
         return redirect('/')->with('success', 'Document created successfully!');
     }
+
+    // Status එක මාරු කිරීම (Ex: Pending -> Paid)
+    public function updateStatus($id, $status)
+    {
+        $document = Document::findOrFail($id);
+        $document->update(['status' => $status]);
+
+        return back()->with('success', 'Status updated to ' . ucfirst($status));
+    }
+
+    public function convertToInvoice($id)
+    {
+        DB::transaction(function () use ($id) {
+            $quote = Document::with('items')->findOrFail($id);
+
+            // 1. අලුත් Invoice එකක් හදනවා පරණ Quote එකේ දත්ත පාවිච්චි කරලා
+            $invoice = Document::create([
+                'project_id'    => $quote->project_id,
+                'doc_number'    => 'INV-' . time(),
+                'type'          => 'invoice',
+                'billing_mode'  => $quote->billing_mode,
+                'total_amount'  => $quote->total_amount,
+                'status'        => 'pending'
+            ]);
+
+            // 2. Quote එකේ තිබුණු Items ටික අලුත් Invoice එකටත් දානවා
+            foreach ($quote->items as $item) {
+                $invoice->items()->create([
+                    'description' => $item->description,
+                    'qty'         => $item->qty,
+                    'unit_price'  => $item->unit_price,
+                ]);
+            }
+
+            // 3. පරණ Quote එක "Accepted" කියලා mark කරනවා
+            $quote->update(['status' => 'accepted']);
+        });
+
+        return redirect()->route('dashboard')->with('success', 'Quotation converted to Invoice!');
+    }
 }

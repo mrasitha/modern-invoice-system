@@ -21,6 +21,7 @@
                                 <th>BILLING</th>
                                 <th>TOTAL</th>
                                 <th>STATUS</th>
+                                <th>ACTION</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,6 +43,24 @@
                                 <td class="fw-bold">LKR {{ number_format($doc->total_amount, 2) }}</td>
                                 <td>
                                     <span class="badge bg-light text-dark border rounded-pill">{{ ucfirst($doc->status) }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu border-0 shadow-sm rounded-3">
+                                            <li><a class="dropdown-content p-2 text-decoration-none text-dark d-block" href="#"><i class="bi bi-eye me-2"></i> View</a></li>
+                                            
+                                            @if($doc->type == 'quotation' && $doc->status == 'pending')
+                                                <li><a class="dropdown-item text-primary" href="{{ route('documents.convert', $doc->id) }}"><i class="bi bi-arrow-repeat me-2"></i> Convert to Invoice</a></li>
+                                            @endif
+
+                                            @if($doc->status == 'pending')
+                                                <li><a class="dropdown-item text-success" href="{{ route('documents.updateStatus', [$doc->id, 'paid']) }}"><i class="bi bi-check2-all me-2"></i> Mark as Paid</a></li>
+                                            @endif
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                             @endforeach
