@@ -59,6 +59,12 @@
                                             @if($doc->status == 'pending')
                                                 <li><a class="dropdown-item text-success" href="{{ route('documents.updateStatus', [$doc->id, 'paid']) }}"><i class="bi bi-check2-all me-2"></i> Mark as Paid</a></li>
                                             @endif
+
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('documents.pdf', $doc->id) }}">
+                                                    <i class="bi bi-file-pdf me-2 text-danger"></i> Download PDF
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </td>
