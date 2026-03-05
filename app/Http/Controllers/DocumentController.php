@@ -10,6 +10,11 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class DocumentController extends Controller
 {
+    public function index() {
+        $documents = Document::with('project')->latest()->get();
+        return view('documents.index', compact('documents'));
+    }
+    
     public function create() {
         $projects = Project::all();
         return view('documents.create', compact('projects'));

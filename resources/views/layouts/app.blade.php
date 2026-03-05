@@ -24,9 +24,18 @@
             <span class="fw-bold fs-4">INV-PRO</span>
         </div>
         <nav class="nav flex-column">
-            <a class="nav-link active" href="/"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
-            <a class="nav-link" href="#"><i class="bi bi-folder-fill me-2"></i> Projects</a>
-            <a class="nav-link" href="#"><i class="bi bi-file-earmark-text-fill me-2"></i> Invoices</a>
+            <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">
+                <i class="bi bi-grid-fill me-2"></i> Dashboard
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('projects.*') ? 'active' : '' }}" href="{{ route('projects.index') }}">
+                <i class="bi bi-folder-fill me-2"></i> Projects
+            </a>
+
+            <a class="nav-link {{ request()->routeIs('documents.*') ? 'active' : '' }}" href="{{ route('documents.create') }}">
+                <i class="bi bi-file-earmark-text-fill me-2"></i> New Document
+            </a>
+
             <a class="nav-link" href="#"><i class="bi bi-gear-fill me-2"></i> Settings</a>
         </nav>
     </div>

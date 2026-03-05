@@ -21,3 +21,5 @@ Route::get('/projects', [ProjectController::class, 'index'])->name('projects.ind
 Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
 Route::get('/projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
 
+// සියලුම Documents (Invoices/Quotes) එක තැනක බැලීමට
+Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
