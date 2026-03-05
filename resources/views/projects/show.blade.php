@@ -32,7 +32,13 @@
                                         {{ ucfirst($doc->type) }}
                                     </span>
                                 </td>
-                                <td class="text-muted">{{ ucfirst($doc->billing_mode) }}</td>
+                                <td class="text-muted">{{ ucfirst($doc->billing_mode) }}
+                                    @if($doc->billing_mode == 'functional')
+                                        <i class="bi bi-layers text-secondary me-1"></i> Functional
+                                    @else
+                                        <i class="bi bi-briefcase text-secondary me-1"></i> Full Project
+                                    @endif
+                                </td>
                                 <td class="fw-bold">LKR {{ number_format($doc->total_amount, 2) }}</td>
                                 <td>
                                     <span class="badge bg-light text-dark border rounded-pill">{{ ucfirst($doc->status) }}</span>
