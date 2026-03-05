@@ -20,7 +20,10 @@ class ProjectController extends Controller
             'client_name' => 'required|string|max:255',
         ]);
 
-        Project::create($request->all());
+        Project::create([
+            'name' => $request->name,
+            'client_name' => $request->client_name,
+        ]);
 
         return redirect()->route('projects.index')->with('success', 'Project created!');
     }
