@@ -36,6 +36,29 @@
         </div>
     </div>
 
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card p-4 h-100">
+                <h5 class="fw-bold mb-4">Revenue Overview</h5>
+                <canvas id="incomeChart" height="250"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 h-100">
+                <h5 class="fw-bold mb-4">Pending Tasks</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item border-0 px-0 d-flex align-items-center">
+                        <i class="bi bi-clock-history text-warning me-3 fs-4"></i>
+                        <div>
+                            <p class="mb-0 fw-bold">3 Quotations</p>
+                            <small class="text-muted">Awaiting client response</small>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <div class="card-header bg-white py-3">
             <h5 class="fw-bold mb-0 text-dark">Recent Transactions</h5>
@@ -77,4 +100,28 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('incomeChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Monthly Income (LKR)',
+                data: [12000, 19000, 30000, 25000, 45000, 60000], // මේවා පසුව Controller එකෙන් ගමු
+                borderColor: '#4318ff',
+                backgroundColor: 'rgba(67, 24, 255, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } }
+        }
+    });
+</script>
 @endsection
