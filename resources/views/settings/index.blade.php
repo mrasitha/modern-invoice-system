@@ -13,16 +13,6 @@
         @csrf
         <div class="row">
             <div class="col-lg-4">
-                <!-- <div class="card border-0 shadow-sm rounded-4 p-4 text-center mb-4">
-                    <div class="mb-3">
-                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 100px; height: 100px;">
-                            <i class="bi bi-building fs-1 text-primary"></i>
-                        </div>
-                    </div>
-                    <h5 class="fw-bold mb-1">Company Identity</h5>
-                    <p class="text-muted small">This logo will appear on all generated PDFs.</p>
-                    <input type="file" name="business_logo" class="form-control form-control-sm mt-3">
-                </div> -->
                 <div class="card border-0 shadow-sm rounded-4 p-4 text-center mb-4">
                     <div class="mb-3 position-relative d-inline-block">
                         <div class="bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm overflow-hidden" style="width: 120px; height: 120px; margin: 0 auto;">

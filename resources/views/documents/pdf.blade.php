@@ -1,114 +1,197 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        body { font-family: 'Helvetica', sans-serif; color: #333; font-size: 13px; margin: 0; padding: 0; }
-        .container { padding: 30px; }
-        .invoice-header { border-bottom: 2px solid #f4f7fe; padding-bottom: 20px; margin-bottom: 30px; }
-        .title { font-size: 24px; font-weight: bold; color: #4318ff; margin: 0; }
-        .status-badge { background: #f4f7fe; color: #4318ff; padding: 5px 10px; border-radius: 5px; font-size: 10px; text-transform: uppercase; }
+        @page { margin: 0; }
+        body { font-family: 'Helvetica', sans-serif; color: #2d3436; font-size: 10px; margin: 0; padding: 0; background: #fff; }
         
-        .table-split { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-        .table-split td { width: 50%; vertical-align: top; }
+        /* Soft Curved Background Graphic */
+        .header-bg {
+            position: absolute;
+            top: -50px; right: -50px;
+            width: 300px; height: 300px;
+            background: #4318ff;
+            border-radius: 50%;
+            opacity: 0.04;
+            z-index: -1;
+        }
+
+        .container { padding: 40px; position: relative; }
+
+        /* Header */
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .logo-area { width: 60%; vertical-align: middle; }
+        .invoice-info-area { width: 40%; text-align: right; vertical-align: top; }
+
+        .logo-img { max-height: 55px; margin-bottom: 10px; }
+        .company-name { font-size: 16px; font-weight: bold; color: #4318ff; margin-bottom: 3px; }
+        .company-sub { font-size: 8.5px; color: #718096; line-height: 1.4; }
+
+        .invoice-label { font-size: 30px; font-weight: 900; color: #1a202c; margin: 0; text-transform: uppercase; letter-spacing: -1px; }
+        .ref-badge { 
+            display: inline-block; 
+            background: #4318ff; 
+            color: #fff; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            margin-top: 5px; 
+            font-size: 9px;
+        }
+
+        /* Billing Section - Compact & Curved */
+        .billing-grid { 
+            width: 100%; 
+            margin-bottom: 30px; 
+            background: #f8fafc; 
+            padding: 20px; 
+            border-radius: 15px; 
+        }
+        .billing-grid td { width: 33%; vertical-align: top; }
+        .small-label { font-size: 8px; color: #a0aec0; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; display: block; }
+        .val-text { font-size: 11px; font-weight: bold; color: #2d3436; }
+
+        /* Icon Style */
+        .icon-img { width: 10px; height: 10px; vertical-align: middle; margin-right: 5px; }
+
+        /* Items Table */
+        .items-table { width: 100%; border-collapse: collapse; }
+        .items-table th { 
+            padding: 10px 15px; 
+            text-align: left; 
+            font-size: 8.5px; 
+            color: #718096; 
+            border-bottom: 1px solid #edf2f7;
+            text-transform: uppercase;
+        }
+        .items-table td { padding: 10px 15px; border-bottom: 1px solid #f8fafc; vertical-align: top; }
         
-        .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .items-table th { background-color: #4318ff; color: #ffffff; padding: 12px; text-align: left; font-size: 11px; }
-        .items-table td { padding: 12px; border-bottom: 1px solid #f4f7fe; }
+        .desc-text { font-weight: bold; color: #2d3436; font-size: 10.5px; margin-bottom: 2px; }
+        .desc-sub { color: #718096; font-size: 9px; line-height: 1.3; }
+
+        /* Total Section */
+        .summary-wrapper { width: 100%; margin-top: 25px; }
+        .summary-table { float: right; width: 200px; border-collapse: collapse; }
+        .summary-table td { padding: 5px 0; }
+        .total-amount { font-size: 15px; color: #4318ff; font-weight: 900; }
+
+        /* Payment Card - Curved */
+        .bottom-section { margin-top: 40px; page-break-inside: avoid; }
+        .payment-card { 
+            background: #f4f7fe; 
+            padding: 15px; 
+            border-radius: 12px; 
+            /* border: 1px solid #4318ff; */
+        }
         
-        .total-section { float: right; width: 250px; margin-top: 30px; }
-        .total-row { display: table; width: 100%; margin-bottom: 5px; }
-        .total-label { display: table-cell; color: #8e98aa; }
-        .total-value { display: table-cell; text-align: right; font-weight: bold; }
-        
-        .footer { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 10px; color: #8e98aa; border-top: 1px solid #eee; padding-top: 15px; }
-        .bank-details { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 50px; font-size: 11px; }
+        .footer-text { position: fixed; bottom: 20px; width: 100%; text-align: center; color: #cbd5e0; font-size: 8px; }
     </style>
 </head>
 <body>
+    <div class="header-bg"></div>
+    
     <div class="container">
-        <div class="invoice-header">
+        <table class="header-table">
+            <tr>
+                <td class="logo-area">
+                    @if(isset($settings['business_logo']))
+                        <img src="{{ public_path('storage/' . $settings['business_logo']) }}" class="logo-img">
+                    @endif
+                    <div class="company-name">{{ $settings['business_name'] ?? 'Your Company' }}</div>
+                    <div class="company-sub">
+                        {!! nl2br(e($settings['business_address'] ?? '')) !!}<br>
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM0MzE4ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNCA0aDE2YzEuMSAwIDIgLjkgMiAydjEyYzAgMS4xLS45IDItMiAyaC0xNmMtMS4xIDAtMi0uOS0yLTJWNmMwLTEuMS45LTIgMi0yek0yMiA2bC0xMCA3TDQgNiIvPjwvc3ZnPg==" class="icon-img"> {{ $settings['business_email'] ?? '-' }}
+                    </div>
+                </td>
+                <td class="invoice-info-area">
+                    <h1 class="invoice-label">{{ $document->type }}</h1>
+                    <div class="ref-badge">#{{ $document->doc_number }}</div>
+                    <div style="margin-top: 10px; color: #718096; font-size: 9px;">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM3MTgwOTYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI0IiB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHJ4PSIyIiByeT0iMiIvPjxwYXRoIGQ9Ik0xNiAydjRNOCAydjRNOTMgMTBoMTgiLz48L3N2Zz4=" class="icon-img"> Issued: <strong>{{ $document->created_at->format('d M, Y') }}</strong><br>
+                        Status: <span style="color: #4318ff; font-weight: bold;">{{ strtoupper($document->status) }}</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="billing-grid">
             <table style="width: 100%;">
                 <tr>
-                    <td style="width: 150px;">
-                        @if(isset($settings['business_logo']))
-                            <img src="{{ public_path('storage/' . $settings['business_logo']) }}" style="max-width: 120px; max-height: 80px;">
-                        @else
-                            <h1 class="title">{{ strtoupper($document->type) }}</h1>
-                        @endif
+                    <td>
+                        <span class="small-label">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM0MzE4ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjAgMjF2LTJhNCA0IDAgMCAwLTQtNGgtNGE0IDQgMCAwIDAtNCAydjJNMTIgN2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+" class="icon-img"> Bill To
+                        </span>
+                        <div class="val-text">{{ $document->project->client_name }}</div>
+                        <div style="color: #718096; font-size: 9px;">{{ $document->project->name }}</div>
                     </td>
                     <td>
-                        <h1 class="title">{{ strtoupper($document->type) }}</h1>
-                        <span class="status-badge">{{ $document->status }}</span>
-                        <p style="margin-top: 10px;">Ref: <strong>#{{ $document->doc_number }}</strong></p>
+                        <span class="small-label">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM0MzE4ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIzIiB5PSI1IiB3aWR0aD0iMTgiIGhlaWdodD0iMTQiIHJ4PSIyIi8+PHBhdGggZD0iTTMgMTBoMTgiLz48L3N2Zz4=" class="icon-img"> Mode
+                        </span>
+                        <div class="val-text">{{ ucfirst($document->billing_mode) }}</div>
+                        <div style="color: #718096; font-size: 9px;">Standard Payment</div>
                     </td>
                     <td style="text-align: right;">
-                        <strong style="font-size: 16px;">{{ $settings['business_name'] ?? 'Your Business' }}</strong><br>
-                        <span style="color: #666;">
-                            {!! nl2br(e($settings['business_address'] ?? 'Address Not Set')) !!}<br>
-                            Tel: {{ $settings['business_phone'] ?? '-' }}<br>
-                            Email: {{ $settings['business_email'] ?? '-' }}
-                        </span>
+                        <span class="small-label">Due Amount</span>
+                        <div style="font-size: 16px; font-weight: 900; color: #4318ff;">LKR {{ number_format($document->total_amount, 2) }}</div>
                     </td>
                 </tr>
             </table>
         </div>
 
-        <table class="table-split">
-            <tr>
-                <td>
-                    <p style="color: #8e98aa; margin-bottom: 5px; font-size: 11px;">BILL TO:</p>
-                    <strong style="font-size: 15px;">{{ $document->project->client_name }}</strong><br>
-                    Project: {{ $document->project->name }}
-                </td>
-                <td style="text-align: right;">
-                    <p style="color: #8e98aa; margin-bottom: 5px; font-size: 11px;">DATE ISSUED:</p>
-                    <strong>{{ $document->created_at->format('M d, Y') }}</strong><br>
-                    Payment Mode: {{ ucfirst($document->billing_mode) }}
-                </td>
-            </tr>
-        </table>
-
         <table class="items-table">
             <thead>
                 <tr>
-                    <th>DESCRIPTION</th>
-                    <th style="text-align: center;">QTY</th>
-                    <th style="text-align: right;">UNIT PRICE</th>
-                    <th style="text-align: right;">AMOUNT</th>
+                    <th style="width: 60%;">Description</th>
+                    <th style="width: 10%; text-align: center;">Qty</th>
+                    <th style="width: 15%; text-align: right;">Rate</th>
+                    <th style="width: 15%; text-align: right;">Amount</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($document->items as $item)
                 <tr>
-                    <td>{{ $item->description }}</td>
-                    <td style="text-align: center;">{{ $item->qty }}</td>
-                    <td style="text-align: right;">{{ number_format($item->unit_price, 2) }}</td>
-                    <td style="text-align: right;">{{ number_format($item->qty * $item->unit_price, 2) }}</td>
+                    <td>
+                        <div class="desc-text">{{ $item->description }}</div>
+                        <div class="desc-sub">Project deliverables and services.</div>
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">{{ $item->qty }}</td>
+                    <td style="text-align: right; vertical-align: middle;">{{ number_format($item->unit_price, 2) }}</td>
+                    <td style="text-align: right; vertical-align: middle; font-weight: bold;">{{ number_format($item->qty * $item->unit_price, 2) }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <div class="total-section">
-            <div class="total-row" style="font-size: 18px; color: #4318ff; border-top: 2px solid #4318ff; padding-top: 10px;">
-                <div class="total-label">Grand Total</div>
-                <div class="total-value">LKR {{ number_format($document->total_amount, 2) }}</div>
-            </div>
+        <div class="summary-wrapper">
+            <table class="summary-table">
+                <tr>
+                    <td style="color: #a0aec0; font-size: 9px;">Subtotal</td>
+                    <td style="text-align: right; font-weight: bold;">{{ number_format($document->total_amount, 2) }}</td>
+                </tr>
+                <tr>
+                    <td style="padding-top: 10px; font-weight: bold; font-size: 11px;">Total Amount</td>
+                    <td style="padding-top: 10px; text-align: right;" class="total-amount">LKR {{ number_format($document->total_amount, 2) }}</td>
+                </tr>
+            </table>
+            <div style="clear: both;"></div>
         </div>
-
-        <div style="clear: both;"></div>
 
         @if(!empty($settings['payment_terms']))
-        <div class="bank-details">
-            <strong style="color: #4318ff;">Payment Information & Terms:</strong><br>
-            <p style="margin-top: 5px;">{!! nl2br(e($settings['payment_terms'])) !!}</p>
+        <div class="bottom-section">
+            <div class="payment-card">
+                <div style="font-weight: bold; color: #4318ff; margin-bottom: 8px; font-size: 9px; text-transform: uppercase;">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM0MzE4ZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTAuNiA0LjhMMTggMTJsLTcuNCA3LjJNMCAwdjI0aDI0VjBIMHoiLz48L3N2Zz4=" class="icon-img" style="width:8px;"> Payment Instructions
+                </div>
+                <div style="line-height: 1.5; color: #4a5568; font-size: 9px;">{!! nl2br(e($settings['payment_terms'])) !!}</div>
+            </div>
         </div>
         @endif
+    </div>
 
-        <div class="footer">
-            Thank you for choosing {{ $settings['business_name'] ?? 'us' }}.<br>
-            Registered No: {{ $settings['business_reg'] ?? 'N/A' }} | Generated on {{ date('Y-m-d H:i') }}
-        </div>
+    <div class="footer-text">
+        {{ $settings['business_name'] ?? '' }} | {{ $settings['business_reg'] ?? 'N/A' }} | Computer Generated Document
     </div>
 </body>
 </html>
