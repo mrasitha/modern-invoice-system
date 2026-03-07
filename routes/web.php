@@ -57,4 +57,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/view-pdf', [DocumentController::class, 'viewPDF'])->name('viewPdf');
         Route::get('/{id}/pdf', [DocumentController::class, 'downloadPDF'])->name('pdf');
     });
+
+    // Settings
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
 });
