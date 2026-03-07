@@ -23,13 +23,17 @@
             @csrf
             <div class="mb-3">
                 <label class="form-label small fw-bold text-muted">Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="mail@example.com" required>
+                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="mail@example.com" required>
+                @error('email') <div class="error-text" style="color: #ea4335; font-size: 12px;">{{ $message }}</div> @enderror
             </div>
+            
             <div class="mb-4">
                 <label class="form-label small fw-bold text-muted">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Min. 8 characters" required>
+                <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Your password" required>
+                @error('password') <div class="error-text" style="color: #ea4335; font-size: 12px;">{{ $message }}</div> @enderror
             </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3 shadow">Login</button>
             <p class="text-center small text-muted">Not registered yet? <a href="{{ route('register') }}" class="text-primary text-decoration-none fw-bold">Create an account</a></p>
         </form>
     </div>
