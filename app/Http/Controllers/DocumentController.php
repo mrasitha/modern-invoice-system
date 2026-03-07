@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Document;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -95,24 +96,24 @@ class DocumentController extends Controller
         return redirect()->route('dashboard')->with('success', 'Quotation converted to Invoice!');
     }
 
+   // viewPDF සහ downloadPDF කියන functions දෙකම මේ විදිහට update කරන්න
     public function viewPDF($id)
     {
         $document = Document::with(['project', 'items'])->findOrFail($id);
-        $pdf = Pdf::loadView('documents.pdf', compact('document'));
         
-        // download() වෙනුවට stream() පාවිච්චි කරමු
+        // Settings ටික ගන්නවා
+        $settings = Setting::pluck('value', 'key')->toArray();
+        
+        $pdf = Pdf::loadView('documents.pdf', compact('document', 'settings'));
         return $pdf->stream($document->doc_number . '.pdf');
     }
-    
+
     public function downloadPDF($id)
     {
-        // Document එක සහ ඒකට අදාළ Project, Items ඔක්කොම එකපාර ගන්නවා (Magic of Eloquent)
         $document = Document::with(['project', 'items'])->findOrFail($id);
-
-        // PDF එකට දත්ත යවනවා
-        $pdf = Pdf::loadView('documents.pdf', compact('document'));
-
-        // PDF එක download වෙන්න සලස්වනවා
+        $settings = Setting::pluck('value', 'key')->toArray();
+        
+        $pdf = Pdf::loadView('documents.pdf', compact('document', 'settings'));
         return $pdf->download($document->doc_number . '.pdf');
     }
 }

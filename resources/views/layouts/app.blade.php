@@ -63,6 +63,9 @@
             <div class="mt-4 mb-2 px-3">
                 <span class="text-uppercase text-muted extra-small fw-bold">Account</span>
             </div>
+            <a class="nav-link {{ request()->routeIs('settings.index') ? 'active' : '' }}" href="{{ route('settings.index') }}">
+                <i class="bi bi-gear-fill me-2"></i> Settings
+            </a>
 
             <form action="{{ route('logout') }}" method="POST" id="logout-form">
                 @csrf
