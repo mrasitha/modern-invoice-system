@@ -6,11 +6,20 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AuthController;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
+// 1. Landing Page (Welcome)
+// මේක Guest සහ Auth දෙන්නාටම ඕන නම් මෙතන තියන්න. 
+// නැත්නම් කෙලින්ම Login එකට Redirect කරන්නත් පුළුවන්.
 Route::get('/', function () {
-    return view('welcome');
+    return auth()->check() ? redirect()->route('dashboard') : view('welcome');
 });
-// 1. Guests ලට විතරක් පේන Routes (Login වෙන්න කලින්)
+
+// 2. Guest Routes (Login වෙන්න කලින්)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -18,32 +27,34 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-// 2. Login වුණු අයට විතරක් පේන Routes (Auth Middleware)
+// 3. Authenticated Routes (Login වුණු අයට විතරයි)
 Route::middleware('auth')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
-    Route::get('/', [DashboardController::class, 'index']);
-
-    // සියලුම Documents (Invoices/Quotes) එක තැනක බැලීමට
-    Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Projects
-    Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-    Route::get('/projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
+    // Projects Management
+    Route::prefix('projects')->name('projects.')->group(function () {
+        Route::get('/', [ProjectController::class, 'index'])->name('index');
+        Route::post('/store', [ProjectController::class, 'store'])->name('store');
+        Route::get('/{id}', [ProjectController::class, 'show'])->name('show');
+    });
 
-    // Documents (Invoices/Quotes) - මේ ටික හරියටම තියෙන්න ඕනේ
-    Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
-    Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create');
-    Route::post('/documents/store', [DocumentController::class, 'store'])->name('documents.store');
-    Route::get('/documents/{id}/status/{status}', [DocumentController::class, 'updateStatus'])->name('documents.updateStatus');
-    Route::get('/documents/{id}/convert', [DocumentController::class, 'convertToInvoice'])->name('documents.convert');
-    Route::get('/documents/{id}/view-pdf', [DocumentController::class, 'viewPDF'])->name('documents.viewPdf');
-    Route::get('/documents/{id}/pdf', [DocumentController::class, 'downloadPDF'])->name('documents.pdf');
+    // Documents (Invoices/Quotes) Management
+    Route::prefix('documents')->name('documents.')->group(function () {
+        Route::get('/', [DocumentController::class, 'index'])->name('index');
+        Route::get('/create', [DocumentController::class, 'create'])->name('create');
+        Route::post('/store', [DocumentController::class, 'store'])->name('store');
+        
+        // Actions
+        Route::get('/{id}/status/{status}', [DocumentController::class, 'updateStatus'])->name('updateStatus');
+        Route::get('/{id}/convert', [DocumentController::class, 'convertToInvoice'])->name('convert');
+        
+        // PDF Handling
+        Route::get('/{id}/view-pdf', [DocumentController::class, 'viewPDF'])->name('viewPdf');
+        Route::get('/{id}/pdf', [DocumentController::class, 'downloadPDF'])->name('pdf');
+    });
 });
-
-
