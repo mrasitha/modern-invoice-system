@@ -19,6 +19,12 @@
             <p class="text-muted small">Enter your email and password to login</p>
         </div>
 
+        @if(session('success'))
+            <div class="alert alert-success border-0 rounded-4 small py-2 mb-3">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+            </div>
+        @endif
+
         <form action="{{ route('login') }}" method="POST">
             @csrf
             <div class="mb-3">
