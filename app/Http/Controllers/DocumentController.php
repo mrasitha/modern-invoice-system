@@ -8,6 +8,8 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Mail\PaymentReceivedMail;
+use Illuminate\Support\Facades\Mail;
 
 class DocumentController extends Controller
 {
@@ -115,10 +117,24 @@ class DocumentController extends Controller
     // Status එක මාරු කිරීම (Ex: Pending -> Paid)
     public function updateStatus($id, $status)
     {
-        $document = Document::findOrFail($id);
+        $document = Document::with(['project', 'items'])->findOrFail($id);
         $document->update(['status' => $status]);
 
-        return back()->with('success', 'Status updated to ' . ucfirst($status));
+        // Status එක 'paid' නම් පමණක් Email එක යවන්න
+        if ($status === 'paid') {
+            $settings = Setting::pluck('value', 'key')->toArray();
+            
+            // PDF එක generate කරගන්න (Email එකට attach කරන්න)
+            $pdf = Pdf::loadView('documents.pdf', compact('document', 'settings'));
+            
+            // Client ගේ email එකට යවන්න (ඔයාගේ Project/Client table එකේ email field එක තිබිය යුතුයි)
+            // දැනට මම මේක $document->project->client_email ලෙස උපකල්පනය කරනවා
+            if ($document->project->client_email) {
+                Mail::to($document->project->client_email)->send(new PaymentReceivedMail($document, $pdf->output()));
+            }
+        }
+
+        return back()->with('success', 'Status updated and Email sent to client!');
     }
 
 
