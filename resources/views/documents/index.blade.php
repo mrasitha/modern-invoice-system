@@ -2,9 +2,29 @@
 
 @section('content')
 <style>
-    /* Table එකේ dropdown එක කැපෙන්නේ නැති වෙන්න මේක ඕනේ */
-    /*.table-responsive { overflow: visible !important; }*/
-    .dropdown-menu { z-index: 1050; }
+    /* Table responsive එක ඇතුළේ dropdown එක කැපෙන්නේ නැති වෙන්න */
+    .table-responsive {
+        overflow: visible !important; /* Mobile එකේදී table එක scroll වෙන්න ඕනේ නම් මේක වෙනස් කරන්න වෙනවා */
+    }
+
+    /* Dropdown එක අනිවාර්යයෙන්ම උඩින් පෙන්වන්න */
+    .dropdown-menu {
+        z-index: 9999 !important;
+        position: absolute !important;
+        /* Dropdown එක table එකේ දකුණු පැත්තට කැපෙනවා නම් මේක පාවිච්චි කරන්න */
+        right: 0 !important; 
+        left: auto !important;
+    }
+
+    /* Mobile view එකේදී විතරක් table එක scroll වෙන්න දීලා dropdown එක පෙන්වන ක්‍රමය */
+    @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto !important;
+            display: block;
+            width: 100%;
+            padding-bottom: 100px; /* Dropdown එකට අවශ්‍ය ඉඩ පල්ලෙහයින් ලබා දෙයි */
+        }
+    }
 </style>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -96,6 +116,7 @@
                                     </button> -->
                                     <button class="btn btn-light btn-sm rounded-circle shadow-sm" 
                                             data-bs-toggle="dropdown" 
+                                            data-bs-display="static"
                                             data-bs-boundary="viewport" 
                                             aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
