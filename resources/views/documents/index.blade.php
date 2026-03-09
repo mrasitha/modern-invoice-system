@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    /* Table එකේ dropdown එක කැපෙන්නේ නැති වෙන්න මේක ඕනේ */
+    /*.table-responsive { overflow: visible !important; }*/
+    .dropdown-menu { z-index: 1050; }
+</style>
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -86,7 +91,13 @@
                                 @endif
 
                                 <div class="dropdown">
-                                    <button class="btn btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="dropdown">
+                                    <!-- <button class="btn btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button> -->
+                                    <button class="btn btn-light btn-sm rounded-circle shadow-sm" 
+                                            data-bs-toggle="dropdown" 
+                                            data-bs-boundary="viewport" 
+                                            aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3">

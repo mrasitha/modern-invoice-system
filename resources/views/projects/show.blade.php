@@ -2,9 +2,17 @@
 
 @section('content')
 <style>
-    /* Table එකේ dropdown එක කැපෙන්නේ නැති වෙන්න මේක ඕනේ */
-    .table-responsive { overflow: visible !important; }
-    .dropdown-menu { z-index: 1050; }
+    /* Table එක Card එක ඇතුළේ ලස්සනට තියාගන්න */
+    .table-responsive {
+        overflow-x: auto; /* Mobile එකේදී table එක ඇතුළේ scroll වෙන්න ඉඩ දෙයි */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Dropdown එකේ පෙනුම තවත් ලස්සන කරන්න (Optional) */
+    .dropdown-menu {
+        border: none !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
 </style>
 
 <div class="container-fluid">
@@ -15,13 +23,13 @@
     </div>
 
     <div class="row mb-4">
-        <div class="col-md-4">
+        <div class="col-md-4 mb-2">
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-primary text-white">
                 <h6 class="opacity-75">Project Total Invoiced</h6>
                 <h2 class="fw-bold">LKR {{ number_format($project->documents->where('type', 'invoice')->sum('total_amount'), 2) }}</h2>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mb-2">
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-info text-white">
                 <h6 class="opacity-75">Total Quotations Value</h6>
                 <h2 class="fw-bold">LKR {{ number_format($project->documents->where('type', 'quotation')->sum('total_amount'), 2) }}</h2>
@@ -67,7 +75,13 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group">
-                                        <button class="btn btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <!-- <button class="btn btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button> -->
+                                        <button class="btn btn-light btn-sm rounded-circle shadow-sm" 
+                                                data-bs-toggle="dropdown" 
+                                                data-bs-boundary="viewport" 
+                                                aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3">
