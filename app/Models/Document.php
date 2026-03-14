@@ -12,7 +12,9 @@ class Document extends Model
         'type', 
         'billing_mode', 
         'total_amount', 
-        'status'
+        'status',
+        'recurring_services',  
+        'terms_and_conditions'  
     ];
 
     public function items()

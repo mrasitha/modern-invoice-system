@@ -34,4 +34,32 @@ class ProjectController extends Controller
         $project = Project::with(['documents.items'])->findOrFail($id);
         return view('projects.show', compact('project'));
     }
+
+    public function getStats($id) {
+        try {
+            $project = Project::with('documents')->findOrFail($id);
+            
+            // 1. අපි දැනට නිකුත් කර ඇති මුළු ඉන්වොයිස් වටිනාකම (Total Invoiced)
+            $totalInvoiced = $project->documents()
+                                    ->where('type', 'invoice')
+                                    ->sum('total_amount');
+            
+            // 2. ඒ ඉන්වොයිස් වලින් ක්ලියන්ට් දැනටමත් ගෙවා ඇති මුළු මුදල (Total Paid)
+            $paidAmount = $project->documents()
+                                ->where('type', 'invoice')
+                                ->where('status', 'paid')
+                                ->sum('total_amount');
+            
+            // 3. ඉන්වොයිස් කරපු මුදලින් තව ලැබිය යුතු ශේෂය (Balance Due)
+            $dueAmount = $totalInvoiced - $paidAmount;
+
+            return response()->json([
+                'total' => number_format($totalInvoiced, 2, '.', ''), // Formatting without commas for JS
+                'paid'  => number_format($paidAmount, 2, '.', ''),
+                'due'   => number_format($dueAmount, 2, '.', '')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

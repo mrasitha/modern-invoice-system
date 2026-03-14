@@ -85,7 +85,16 @@
             /* border: 1px solid #4318ff; */
         }
         
-        .footer-text { position: fixed; bottom: 20px; width: 100%; text-align: center; color: #cbd5e0; font-size: 8px; }
+        /* Custom Content Areas */
+        .info-box { 
+            background: #fffaf0; border-left: 4px solid #ed8936; padding: 15px; margin-top: 20px; border-radius: 4px; 
+        }
+        .terms-box { 
+            margin-top: 30px; padding: 15px; border-top: 1px solid #edf2f7; 
+        }
+        .footer-text { 
+            position: fixed; bottom: 20px; width: 100%; text-align: center; color: #cbd5e0; font-size: 8px; 
+        }
     </style>
 </head>
 <body>
@@ -176,6 +185,29 @@
                 </tr>
             </table>
             <div style="clear: both;"></div>
+
+            @if($document->recurring_services)
+            <div class="info-box">
+                <div style="font-weight: bold; color: #dd6b20; font-size: 9px; text-transform: uppercase; margin-bottom: 5px;">
+                    Recurring Monthly Services
+                </div>
+                <div style="line-height: 1.4; color: #4a5568; font-size: 9px;">
+                    {!! nl2br(e($document->recurring_services)) !!}
+                </div>
+            </div>
+            @endif
+
+            @if($document->terms_and_conditions)
+            <div class="terms-box">
+                <div style="font-weight: bold; color: #2d3436; font-size: 9px; text-transform: uppercase; margin-bottom: 8px;">
+                    Terms & Conditions
+                </div>
+                <div style="line-height: 1.6; color: #718096; font-size: 8.5px;">
+                    {!! nl2br(e($document->terms_and_conditions)) !!}
+                </div>
+            </div>
+            @endif
+            
         </div>
 
         @if(!empty($settings['payment_terms']))

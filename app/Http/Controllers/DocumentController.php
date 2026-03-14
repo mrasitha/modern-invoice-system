@@ -42,27 +42,71 @@ class DocumentController extends Controller
         return view('documents.create', compact('projects'));
     }
 
+    // public function store(Request $request) {
+    //     $request->validate([
+    //         'project_id' => 'required',
+    //         'type' => 'required',
+    //         'items' => 'required|array',
+    //     ]);
+
+    //     DB::transaction(function () use ($request) {
+    //         $prefix = ($request->type == 'invoice') ? 'INV' : 'QUO';
+            
+    //         // Serial Number එක ගණනය කිරීම
+    //         $lastDoc = Document::where('type', $request->type)->latest()->first();
+    //         $nextId = $lastDoc ? ((int) explode('-', $lastDoc->doc_number)[1]) + 1 : 1;
+    //         $docNumber = $prefix . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+    //         $document = Document::create([
+    //             'project_id'   => $request->project_id,
+    //             'doc_number'   => $docNumber,
+    //             'type'         => $request->type,
+    //             'billing_mode' => $request->billing_mode,
+    //             'status'       => 'pending'
+    //         ]);
+
+    //         $total = 0;
+    //         foreach ($request->items as $item) {
+    //             $document->items()->create([
+    //                 'description' => $item['desc'],
+    //                 'qty'         => $item['qty'],
+    //                 'unit_price'  => $item['price']
+    //             ]);
+    //             $total += ($item['qty'] * $item['price']);
+    //         }
+
+    //         $document->update(['total_amount' => $total]);
+    //     });
+
+    //     return redirect('/')->with('success', 'Document created successfully!');
+    // }
+
     public function store(Request $request) {
+        // 1. Validation එකට අලුත් fields ටික එකතු කරමු
         $request->validate([
             'project_id' => 'required',
             'type' => 'required',
             'items' => 'required|array',
+            'recurring_services' => 'nullable|string',
+            'terms_and_conditions' => 'nullable|string',
         ]);
 
         DB::transaction(function () use ($request) {
             $prefix = ($request->type == 'invoice') ? 'INV' : 'QUO';
             
-            // Serial Number එක ගණනය කිරීම
             $lastDoc = Document::where('type', $request->type)->latest()->first();
             $nextId = $lastDoc ? ((int) explode('-', $lastDoc->doc_number)[1]) + 1 : 1;
             $docNumber = $prefix . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
+            // 2. Document create කරද්දීම අලුත් fields ටික save කරමු
             $document = Document::create([
-                'project_id'   => $request->project_id,
-                'doc_number'   => $docNumber,
-                'type'         => $request->type,
-                'billing_mode' => $request->billing_mode,
-                'status'       => 'pending'
+                'project_id'           => $request->project_id,
+                'doc_number'           => $docNumber,
+                'type'                 => $request->type,
+                'billing_mode'         => $request->billing_mode,
+                'status'               => 'pending',
+                'recurring_services'   => $request->recurring_services,
+                'terms_and_conditions' => $request->terms_and_conditions,
             ]);
 
             $total = 0;
@@ -78,7 +122,7 @@ class DocumentController extends Controller
             $document->update(['total_amount' => $total]);
         });
 
-        return redirect('/')->with('success', 'Document created successfully!');
+        return redirect()->route('documents.index')->with('success', 'Document created successfully!');
     }
 
     public function convertToInvoice($id)

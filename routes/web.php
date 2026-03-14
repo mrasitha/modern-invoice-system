@@ -42,6 +42,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ProjectController::class, 'index'])->name('index');
         Route::post('/store', [ProjectController::class, 'store'])->name('store');
         Route::get('/{id}', [ProjectController::class, 'show'])->name('show');
+
+        // වැදගත්: Stats route එක ID එකට උඩින් දාන්න (නැත්නම් '{id}' එකට අහුවෙන්න පුළුවන්)
+        Route::get('/{id}/stats', [ProjectController::class, 'getStats'])->name('stats');
     });
 
     // Documents (Invoices/Quotes) Management
